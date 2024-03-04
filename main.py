@@ -1,46 +1,75 @@
+import random
 import pygame
 
 pygame.init()
 
-# scene variables
+# Scene variables
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-WINDOW = SCREEN_HEIGHT * SCREEN_WIDTH
-
 GRID_DIM = 4
 CELL_DIM = SCREEN_WIDTH // GRID_DIM
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Memory Game")
-background = pygame.image.load("img\\background.png")  #immagine di sfondo
+
+background = pygame.image.load("img/background.png")
 background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-def drawGrid(griglia):
+blank = pygame.image.load("img/blank.png")
+blank = pygame.transform.scale(blank, (CELL_DIM, CELL_DIM))
+
+pika = pygame.image.load("img/pika.jpg")
+pika = pygame.transform.scale(pika, (CELL_DIM, CELL_DIM))
+
+def crea_griglia(righe, colonne):
+    griglia = []
+    for _ in range(righe):
+        riga = [""] * colonne
+        griglia.append(riga)
+    return griglia
+
+def popola_griglia(griglia, immagini):
+    coppie = immagini * 2
+    random.shuffle(coppie)
+    for riga in griglia:
+        for i in range(len(riga)):
+            riga[i] = coppie.pop()
+
+def mostra_immagine(riga, colonna):
+    global griglia
+    img = griglia[riga][colonna]
+    screen.blit(img, (colonna * CELL_DIM, riga * CELL_DIM))
+    pygame.display.update()
+    #pygame.time.delay(1000)
+    #nascondi_immagine(riga, colonna)
+
+def nascondi_immagine(riga, colonna):
+    global blank
+    screen.blit(blank, (colonna * CELL_DIM, riga * CELL_DIM))
+    pygame.display.update()
+
+def nascondiGriglia(griglia):
     for riga in range(GRID_DIM):
         for colonna in range(GRID_DIM):
-            x = colonna * CELL_DIM
-            y = riga * CELL_DIM
-            pygame.draw.rect(screen, (255, 255, 255), (x, y, CELL_DIM, CELL_DIM), 2)
-            font = pygame.font.Font(None, 36)
-            testo = font.render(griglia[riga][colonna], True, (255, 255, 255))
-            testo_rettangolo = testo.get_rect(center=(x + CELL_DIM / 2, y + CELL_DIM / 2))
-            screen.blit(testo, testo_rettangolo)
-
+            nascondi_immagine(riga, colonna)
 
 run = True
+#clock = pygame.time.Clock()
+
+griglia = crea_griglia(4, 4)
+popola_griglia(griglia, [pika, pika, pika, pika, pika, pika, pika, pika])
+
+for riga in range(GRID_DIM):
+    for colonna in range(GRID_DIM):
+        pygame.draw.rect(screen, (255, 255, 255), (colonna * CELL_DIM, riga * CELL_DIM, CELL_DIM, CELL_DIM), 2)
+        pygame.display.update()
+screen.blit(background, (0, 0))
 while run:
-    grid = [['A', 'B', 'C', 'D'],
-            ['E', 'F', 'G', 'H'],
-            ['A', 'B', 'C', 'D'],
-            ['E', 'F', 'G', 'H']]
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    
-    
-    screen.blit(background, (0, 0)) #color the screen
-    drawGrid(grid)
-    pygame.display.update() #aggiorna la finestra di gioco or pygame.display.flip()
 
-pygame.quit() #chiude programma
+    
+    nascondiGriglia(griglia)
+
+pygame.quit()
