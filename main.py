@@ -46,6 +46,7 @@ image8 = pygame.image.load("img/image8.jpg")
 image8 = pygame.transform.scale(image8, (CELL_DIM, CELL_DIM))
 
 coppiaScoperta = 0 #How many pairs are discovered
+coppieDaScoprire = 8 #How many pairs to discover
 #coppieSelezionate = [] #Selected pairs
 rigaT1 = NotImplemented
 rigaT2 = NotImplemented 
@@ -178,6 +179,7 @@ while run:
                     if coppiaScoperta == 2:
                         if coppiaUguale(coppia1, coppia2): # coppia uguale
                             deleteCoppia()
+                            coppieDaScoprire -= 1
                             coppiaScoperta = 0
                             pygame.time.delay(500)
                         else: #coppia non uguale allora reset
@@ -190,7 +192,9 @@ while run:
                             colonnaT1 = NotImplemented
                             colonnaT2 = NotImplemented
                             coppiaScoperta = 0
-
+    if coppieDaScoprire == 0:
+        run = False
+        print("Hai vinto!")
     pygame.display.update()
 
 pygame.quit()
