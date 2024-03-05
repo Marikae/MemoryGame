@@ -7,7 +7,7 @@ pygame.init()
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 GRID_DIM = 4
-CELL_DIM = SCREEN_WIDTH // GRID_DIM 
+CELL_DIM = SCREEN_HEIGHT // GRID_DIM 
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Memory Game")
@@ -21,7 +21,7 @@ blank = pygame.transform.scale(blank, (CELL_DIM, CELL_DIM))
 transparent = pygame.image.load("img/red.png")
 transparent = pygame.transform.scale(transparent, (CELL_DIM, CELL_DIM))
 
-image1 = pygame.image.load("img/pika.jpg")
+image1 = pygame.image.load("img/image1.png")
 image1 = pygame.transform.scale(image1, (CELL_DIM, CELL_DIM))
 
 image2 = pygame.image.load("img/image2.png")
@@ -47,150 +47,150 @@ image8 = pygame.transform.scale(image8, (CELL_DIM, CELL_DIM))
 
 coppiaScoperta = 0 #How many pairs are discovered
 coppieDaScoprire = 8 #How many pairs to discover
-#coppieSelezionate = [] #Selected pairs
-rigaT1 = NotImplemented
-rigaT2 = NotImplemented 
-colonnaT1 = NotImplemented
-colonnaT2 = NotImplemented
 
-def crea_griglia(righe, colonne): #Create a grid
-    griglia = []
+rowT1 = NotImplemented
+rowT2 = NotImplemented 
+columnT1 = NotImplemented
+columnT2 = NotImplemented
+
+def createGrid(righe, colonne): #Create a grid
+    grid = []
     for _ in range(righe):
-        riga = [""] * colonne
-        griglia.append(riga)
-    return griglia
+        row = [""] * colonne
+        grid.append(row)
+    return grid
 
-def popola_griglia(griglia, coperture, immagini):
-    for riga in range(len(griglia)):
-        for colonna in range(len(griglia[riga])):
-            griglia[riga][colonna] = immagini.pop()
-            coperture[riga][colonna] = blank
+def insertInGrid(grid, coperture, immagini):
+    for row in range(len(grid)):
+        for column in range(len(grid[row])):
+            grid[row][column] = immagini.pop()
+            coperture[row][column] = blank
 
-def togliCopertura(riga, colonna):
+def hideCoperture(row, column):
     global background
-    screen.blit(background, (colonna * CELL_DIM, riga * CELL_DIM), (colonna * CELL_DIM, riga * CELL_DIM, CELL_DIM, CELL_DIM))
+    screen.blit(background, (column * CELL_DIM, row * CELL_DIM), (column * CELL_DIM, row * CELL_DIM, CELL_DIM, CELL_DIM))
     pygame.display.update()
 
-def mostra_immagine(riga, colonna):
-    global griglia
-    img = griglia[riga][colonna]
-    screen.blit(img, (colonna * CELL_DIM, riga * CELL_DIM))
+def showTessere(row, column):
+    global grid
+    img = grid[row][column]
+    screen.blit(img, (column * CELL_DIM, row * CELL_DIM))
     pygame.display.update()
 
-def disegnaTessere():
-    global griglia
-    for riga in range(GRID_DIM):
-        for colonna in range(GRID_DIM):
-            screen.blit(griglia[riga][colonna], (colonna * CELL_DIM, riga * CELL_DIM))
+def drawTessere():
+    global grid
+    for row in range(GRID_DIM):
+        for column in range(GRID_DIM):
+            screen.blit(grid[row][column], (column * CELL_DIM, row * CELL_DIM))
     
 
-def disegnaCoperture():
+def drawCoperture():
     global coperture
-    for riga in range(GRID_DIM):
-        for colonna in range(GRID_DIM):
-            screen.blit(coperture[riga][colonna], (colonna * CELL_DIM, riga * CELL_DIM))
+    for row in range(GRID_DIM):
+        for column in range(GRID_DIM):
+            screen.blit(coperture[row][column], (column * CELL_DIM, row * CELL_DIM))
     
 
 
-def nascondi_immagine(riga, colonna):
+def hideTessere(row, column):
     global coperture
-    screen.blit(coperture[riga][colonna], (colonna * CELL_DIM, riga * CELL_DIM))
+    screen.blit(coperture[row][column], (column * CELL_DIM, row * CELL_DIM))
     pygame.display.update()
 
-def nascondiGriglia():
-    for riga in range(GRID_DIM):
-        for colonna in range(GRID_DIM):
-            screen.blit(coperture[riga][colonna], (colonna * CELL_DIM, riga * CELL_DIM))
+def hideGrid():
+    for row in range(GRID_DIM):
+        for column in range(GRID_DIM):
+            screen.blit(coperture[row][column], (column * CELL_DIM, row * CELL_DIM))
 
-def trova_cella_cliccata(pos):
+def foundCellClicked(pos):
     x, y = pos
-    colonna = x // CELL_DIM
-    riga = y // CELL_DIM
-    return riga, colonna
+    column = x // CELL_DIM
+    row = y // CELL_DIM
+    return row, column
 
-def disegna_griglia():
-    for riga in range(GRID_DIM):
-        for colonna in range(GRID_DIM):
-            pygame.draw.rect(screen, (255, 255, 255), (colonna * CELL_DIM, riga * CELL_DIM, CELL_DIM, CELL_DIM), 2)
+def drawGrid():
+    for row in range(GRID_DIM):
+        for column in range(GRID_DIM):
+            pygame.draw.rect(screen, (255, 255, 255), (column * CELL_DIM, row * CELL_DIM, CELL_DIM, CELL_DIM), 2)
             pygame.display.update()
 
-def coppiaUguale(coppia1, coppia2):
+def equalCells(coppia1, coppia2):
     return coppia1 == coppia2
 
 def deleteCoppia():
-    global griglia, coperture
+    global grid, coperture
     
-    riga1 = rigaT1 
-    colonna1 = colonnaT1
-    riga2 = rigaT2 
-    colonna2 = colonnaT2
+    row1 = rowT1 
+    column1 = columnT1
+    row2 = rowT2 
+    column2 = columnT2
 
-    griglia[riga1][colonna1] = background
-    griglia[riga2][colonna2] = background
+    grid[row1][column1] = background
+    grid[row2][column2] = background
 
-    coperture[riga1][colonna1] = background
-    coperture[riga2][colonna2] = background
+    coperture[row1][column1] = background
+    coperture[row2][column2] = background
     
-    disegnaTessere()
-    disegnaCoperture()
+    drawTessere()
+    drawCoperture()
 
 
-def getPositionRigaColonna(coppia):
-    for riga in range(GRID_DIM):
-        for colonna in range(GRID_DIM):
-            if griglia[riga][colonna] == coppia:
-                return riga, colonna
+def getPositionrowcolumn(coppia):
+    for row in range(GRID_DIM):
+        for column in range(GRID_DIM):
+            if grid[row][column] == coppia:
+                return row, column
 
 run = True
 
-griglia = crea_griglia(GRID_DIM, GRID_DIM)
-coperture = crea_griglia(GRID_DIM, GRID_DIM)
+grid = createGrid(GRID_DIM, GRID_DIM)
+coperture = createGrid(GRID_DIM, GRID_DIM)
 
 # Creazione della lista delle coppie di immagini
 tessere = [image1, image2, image3, image4, image5, image6, image7, image8]
 coppieTessere = tessere * 2
 random.shuffle(coppieTessere)
 
-popola_griglia(griglia, coperture, coppieTessere)
+insertInGrid(grid, coperture, coppieTessere)
 screen.blit(background, (0, 0))
-nascondiGriglia() # Tessere scoperte
+hideGrid() # Tessere scoperte
 
 while run:
-    disegna_griglia()
+    drawGrid()
     for event in pygame.event.get():
         if event.type == pygame.QUIT: #exit
             run = False
         elif event.type == pygame.MOUSEBUTTONDOWN: #click
             if event.button == 1:  # left click
-                riga, colonna = trova_cella_cliccata(event.pos)
+                row, column = foundCellClicked(event.pos)
                 
                 if coppiaScoperta < 2:  # Verifica se non sono state scoperte più di due coppie
-                    togliCopertura(riga, colonna)
-                    mostra_immagine(riga, colonna)
+                    hideCoperture(row, column)
+                    showTessere(row, column)
                     if coppiaScoperta == 0:
-                        coppia1 = griglia[riga][colonna]
-                        rigaT1 = riga
-                        colonnaT1 = colonna
+                        coppia1 = grid[row][column]
+                        rowT1 = row
+                        columnT1 = column
                     elif coppiaScoperta == 1:
-                        coppia2 = griglia[riga][colonna]
-                        rigaT2 = riga
-                        colonnaT2 = colonna
+                        coppia2 = grid[row][column]
+                        rowT2 = row
+                        columnT2 = column
                     coppiaScoperta += 1
                     if coppiaScoperta == 2:
-                        if coppiaUguale(coppia1, coppia2): # coppia uguale
+                        if equalCells(coppia1, coppia2): # coppia uguale
                             deleteCoppia()
                             coppieDaScoprire -= 1
                             coppiaScoperta = 0
                             pygame.time.delay(500)
                         else: #coppia non uguale allora reset
                             pygame.time.delay(300)  
-                            disegnaCoperture()
+                            drawCoperture()
                             coppia1 = NotImplemented
                             coppia2 = NotImplemented
-                            rigaT1 = NotImplemented
-                            rigaT2 = NotImplemented
-                            colonnaT1 = NotImplemented
-                            colonnaT2 = NotImplemented
+                            rowT1 = NotImplemented
+                            rowT2 = NotImplemented
+                            columnT1 = NotImplemented
+                            columnT2 = NotImplemented
                             coppiaScoperta = 0
     if coppieDaScoprire == 0:
         run = False
