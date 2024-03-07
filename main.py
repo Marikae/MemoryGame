@@ -147,6 +147,16 @@ def drawStartScreen():
     text = font.render("Play", True, (0, 0, 0))
     text_rect = text.get_rect(center = start_button_rect.center)
     screen.blit(text, text_rect)
+
+    # Draw a label
+    label_font = pygame.font.SysFont(None, 40)
+    if gameEnded:
+        label_text = label_font.render("GAME END!", True, (255, 255, 255))
+    else:
+        label_text = label_font.render("MARICAO'S MEMORY GAME", True, (255, 255, 255))
+    label_text_rect = label_text.get_rect(center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4))
+    screen.blit(label_text, label_text_rect)
+    
     pygame.display.update()
 
 def resetVariables():
@@ -180,7 +190,7 @@ def initialize():
 
 def gamePlay():
     initialize()
-    global coppiaScoperta, rowT1, rowT2, columnT1, columnT2, coppia1, coppia2, coppieDaScoprire, runPlay
+    global coppiaScoperta, rowT1, rowT2, columnT1, columnT2, coppia1, coppia2, coppieDaScoprire, runPlay, gameEnded
     while runPlay:
         drawGrid()
         for event in pygame.event.get():
@@ -222,11 +232,13 @@ def gamePlay():
                                 coppiaScoperta = 0
         if coppieDaScoprire == 0:
             runPlay = False
+            gameEnded = True
             print("Game ended!")
         pygame.display.update()
 
 def main():
-    global run
+    global run, gameEnded
+    gameEnded = False
     run = True
     while run:
         drawStartScreen()
