@@ -141,62 +141,92 @@ def getPositionrowcolumn(coppia):
             if grid[row][column] == coppia:
                 return row, column
 
-run = True
-
-grid = createGrid(GRID_DIM, GRID_DIM)
-coperture = createGrid(GRID_DIM, GRID_DIM)
-
-# Creazione della lista delle coppie di immagini
-tessere = [image1, image2, image3, image4, image5, image6, image7, image8]
-coppieTessere = tessere * 2
-random.shuffle(coppieTessere)
-
-insertInGrid(grid, coperture, coppieTessere)
-screen.blit(background, (0, 0))
-hideGrid() # Tessere scoperte
-
-while run:
-    drawGrid()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT: #exit
-            run = False
-        elif event.type == pygame.MOUSEBUTTONDOWN: #click
-            if event.button == 1:  # left click
-                row, column = foundCellClicked(event.pos)
-                
-                if coppiaScoperta < 2:  # Verifica se non sono state scoperte più di due coppie
-                    hideCoperture(row, column)
-                    showTessere(row, column)
-                    if coppiaScoperta == 0:
-                        coppia1 = grid[row][column]
-                        rowT1 = row
-                        columnT1 = column
-                    elif coppiaScoperta == 1:
-                        coppia2 = grid[row][column]
-                        rowT2 = row
-                        columnT2 = column
-                    coppiaScoperta += 1
-                    if rowT1 == rowT2 and columnT1 == columnT2:
-                        coppiaScoperta -= 1
-                    if coppiaScoperta == 2:
-                        if equalCells(coppia1, coppia2): # coppia uguale
-                            deleteCoppia()
-                            coppieDaScoprire -= 1
-                            coppiaScoperta = 0
-                            pygame.time.delay(900)
-                        else: #coppia non uguale allora reset
-                            pygame.time.delay(300)  
-                            drawCoperture()
-                            coppia1 = NotImplemented
-                            coppia2 = NotImplemented
-                            rowT1 = NotImplemented
-                            rowT2 = NotImplemented
-                            columnT1 = NotImplemented
-                            columnT2 = NotImplemented
-                            coppiaScoperta = 0
-    if coppieDaScoprire == 0:
-        run = False
-        print("Hai vinto!")
+def drawStartScreen():
+    
+    # Draw the initial screen with the "Start" button
+    screen.blit(background, (0, 0))
+    start_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 - 25, 100, 50)
+    pygame.draw.rect(screen, (0, 255, 0), start_button_rect)
+    font = pygame.font.SysFont(None, 30)
+    text = font.render("Start", True, (255, 255, 255))
+    text_rect = text.get_rect(center=start_button_rect.center)
+    screen.blit(text, text_rect)
     pygame.display.update()
 
+def initialize():
+    global run, grid, coperture, tessere, coppieTessere
+    run = True
+    grid = createGrid(GRID_DIM, GRID_DIM)
+    coperture = createGrid(GRID_DIM, GRID_DIM)
+    # Creazione della lista delle coppie di immagini
+    tessere = [image1, image2, image3, image4, image5, image6, image7, image8]
+    coppieTessere = tessere * 2
+    random.shuffle(coppieTessere)
+    insertInGrid(grid, coperture, coppieTessere)
+    screen.blit(background, (0, 0))
+    hideGrid() # Tessere scoperte
+
+def gamePlay():
+    initialize()
+    global coppiaScoperta, rowT1, rowT2, columnT1, columnT2, coppia1, coppia2, coppieDaScoprire, run
+    while run:
+        drawGrid()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: #exit
+                run = False
+            elif event.type == pygame.MOUSEBUTTONDOWN: #click
+                if event.button == 1:  # left click
+                    row, column = foundCellClicked(event.pos)
+                    
+                    if coppiaScoperta < 2:  # Verifica se non sono state scoperte più di due coppie
+                        hideCoperture(row, column)
+                        showTessere(row, column)
+                        if coppiaScoperta == 0:
+                            coppia1 = grid[row][column]
+                            rowT1 = row
+                            columnT1 = column
+                        elif coppiaScoperta == 1:
+                            coppia2 = grid[row][column]
+                            rowT2 = row
+                            columnT2 = column
+                        coppiaScoperta += 1
+                        if rowT1 == rowT2 and columnT1 == columnT2:
+                            coppiaScoperta -= 1
+                        if coppiaScoperta == 2:
+                            if equalCells(coppia1, coppia2): # coppia uguale
+                                deleteCoppia()
+                                coppieDaScoprire -= 1
+                                coppiaScoperta = 0
+                                pygame.time.delay(900)
+                            else: #coppia non uguale allora reset
+                                pygame.time.delay(300)  
+                                drawCoperture()
+                                coppia1 = NotImplemented
+                                coppia2 = NotImplemented
+                                rowT1 = NotImplemented
+                                rowT2 = NotImplemented
+                                columnT1 = NotImplemented
+                                columnT2 = NotImplemented
+                                coppiaScoperta = 0
+        if coppieDaScoprire == 0:
+            #run = False
+            print("Hai vinto!")
+        pygame.display.update()
+
+def main():
+    global run
+    run = True
+    while run:
+        drawStartScreen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mouse_pos = event.pos
+                    start_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 - 25, 100, 50)
+                    if start_button_rect.collidepoint(mouse_pos):
+                        gamePlay()
+
+main()
 pygame.quit()
