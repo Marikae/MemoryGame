@@ -15,6 +15,9 @@ pygame.display.set_caption("Memory Game")
 background = pygame.image.load("img/background.png")
 background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
+startScene = pygame.image.load("img/firstScene.png")
+startScene = pygame.transform.scale(startScene, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
 blank = pygame.image.load("img/blank.png")
 blank = pygame.transform.scale(blank, (CELL_DIM, CELL_DIM))
 
@@ -82,15 +85,12 @@ def drawTessere():
     for row in range(GRID_DIM):
         for column in range(GRID_DIM):
             screen.blit(grid[row][column], (column * CELL_DIM, row * CELL_DIM))
-    
 
 def drawCoperture():
     global coperture
     for row in range(GRID_DIM):
         for column in range(GRID_DIM):
             screen.blit(coperture[row][column], (column * CELL_DIM, row * CELL_DIM))
-    
-
 
 def hideTessere(row, column):
     global coperture
@@ -119,15 +119,12 @@ def equalCells(coppia1, coppia2):
 
 def deleteCoppia():
     global grid, coperture
-    
     row1 = rowT1 
     column1 = columnT1
     row2 = rowT2 
     column2 = columnT2
-
     grid[row1][column1] = background
     grid[row2][column2] = background
-
     coperture[row1][column1] = background
     coperture[row2][column2] = background
     
@@ -142,20 +139,35 @@ def getPositionrowcolumn(coppia):
                 return row, column
 
 def drawStartScreen():
-    
     # Draw the initial screen with the "Start" button
-    screen.blit(background, (0, 0))
+    screen.blit(startScene, (0, 0))
     start_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 - 25, 100, 50)
-    pygame.draw.rect(screen, (0, 255, 0), start_button_rect)
+    pygame.draw.rect(screen, (255, 219, 88), start_button_rect)
     font = pygame.font.SysFont(None, 30)
-    text = font.render("Start", True, (255, 255, 255))
-    text_rect = text.get_rect(center=start_button_rect.center)
+    text = font.render("Play", True, (0, 0, 0))
+    text_rect = text.get_rect(center = start_button_rect.center)
     screen.blit(text, text_rect)
     pygame.display.update()
 
+def resetVariables():
+    global coppiaScoperta, rowT1, rowT2, columnT1, columnT2, coppia1, coppia2, coppieDaScoprire, grid, coperture, tessere, coppieTessere
+    coppiaScoperta = 0
+    rowT1 = NotImplemented
+    rowT2 = NotImplemented
+    columnT1 = NotImplemented
+    columnT2 = NotImplemented
+    coppia1 = NotImplemented
+    coppia2 = NotImplemented
+    grid = NotImplemented
+    coperture = NotImplemented
+    tessere = NotImplemented
+    coppieTessere = NotImplemented
+    coppieDaScoprire = 8
+
 def initialize():
-    global run, grid, coperture, tessere, coppieTessere
-    run = True
+    global runPlay, grid, coperture, tessere, coppieTessere
+    resetVariables()
+    runPlay = True
     grid = createGrid(GRID_DIM, GRID_DIM)
     coperture = createGrid(GRID_DIM, GRID_DIM)
     # Creazione della lista delle coppie di immagini
@@ -168,12 +180,12 @@ def initialize():
 
 def gamePlay():
     initialize()
-    global coppiaScoperta, rowT1, rowT2, columnT1, columnT2, coppia1, coppia2, coppieDaScoprire, run
-    while run:
+    global coppiaScoperta, rowT1, rowT2, columnT1, columnT2, coppia1, coppia2, coppieDaScoprire, runPlay
+    while runPlay:
         drawGrid()
         for event in pygame.event.get():
             if event.type == pygame.QUIT: #exit
-                run = False
+                runPlay = False
             elif event.type == pygame.MOUSEBUTTONDOWN: #click
                 if event.button == 1:  # left click
                     row, column = foundCellClicked(event.pos)
@@ -209,8 +221,8 @@ def gamePlay():
                                 columnT2 = NotImplemented
                                 coppiaScoperta = 0
         if coppieDaScoprire == 0:
-            #run = False
-            print("Hai vinto!")
+            runPlay = False
+            print("Game ended!")
         pygame.display.update()
 
 def main():
