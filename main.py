@@ -176,12 +176,14 @@ while run:
                         rowT2 = row
                         columnT2 = column
                     coppiaScoperta += 1
+                    if rowT1 == rowT2 and columnT1 == columnT2:
+                        coppiaScoperta -= 1
                     if coppiaScoperta == 2:
                         if equalCells(coppia1, coppia2): # coppia uguale
                             deleteCoppia()
                             coppieDaScoprire -= 1
                             coppiaScoperta = 0
-                            pygame.time.delay(500)
+                            pygame.time.delay(900)
                         else: #coppia non uguale allora reset
                             pygame.time.delay(300)  
                             drawCoperture()
